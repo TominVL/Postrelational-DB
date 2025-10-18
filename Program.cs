@@ -34,7 +34,7 @@ class Teacher : Person
 
 class Student : Person
 {
-    // посилання на інший об’єкт (викладач як наставник)
+    // посилання на інший об’єкт
     public Teacher Advisor { get; private set; }
 
     public List<int> Grades { get; } = new();
@@ -54,7 +54,7 @@ class Student : Person
         => $"Student {Name} — advisor: {Advisor?.Name ?? "(none)"}, grades: {Grades.Count}, avg: {Avg():F1}";
 }
 
-// 3) Клас-композиція: має список об’єктів базового типу (масив/список об’єктів)
+// 3) Клас-композиція: список об’єктів базового типу (масив/список об’єктів)
 class Classroom
 {
     public string Code { get; }
@@ -82,13 +82,13 @@ class Program
 
         // заповнення властивостей і виклики методів
         s.SetAdvisor(t);
-        s.AddGrade(90);                // overload #1
-        s.AddGrade(88, 95, 100);       // overload #2 (params)
+        s.AddGrade(90);
+        s.AddGrade(88, 95, 100);
 
         t.Rename("Prof. ", "Ada");     // перевантажений метод із префіксом
         s.Rename("Vladyslav");         // перевантажений метод без префікса
 
-        room.Add(t, s);                // overload додавання кількох
+        room.Add(t, s);
 
         // поліморфний виклик Describe()
         Console.WriteLine(room);
@@ -96,3 +96,4 @@ class Program
             Console.WriteLine(p.Describe());
     }
 }
+
