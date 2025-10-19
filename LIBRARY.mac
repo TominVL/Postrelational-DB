@@ -1,0 +1,61 @@
+ROUTINE LIBRARY [Type=MAC]
+LIBRARY ; ===== Простий приклад "Бібліотека" =====
+
+    NEW date,id,title,genre,author,rating,node,nextID,ref
+
+    WRITE "=== Реєстрація книги у бібліотеці ===",!!
+
+    ; ---- Зчитування даних ----
+    READ "Введіть дату надходження (YYYY-MM-DD): ", date  WRITE !
+    READ "Введіть ID книги (число): ", id                WRITE !
+    READ "Введіть назву книги: ", title                  WRITE !
+    READ "Введіть жанр книги: ", genre                   WRITE !
+    READ "Введіть автора: ", author                      WRITE !
+    READ "Введіть рейтинг книги (1-10): ", rating        WRITE !
+
+    ; ---- Зберігаємо дані у глобал з 4 підскриптами ----
+    ; Підскрипти: дата (string), ID (number), жанр (string), рейтинг (number)
+    SET ^Books(date,+id,genre,+rating,"Title")  = title
+    SET ^Books(date,+id,genre,+rating,"Author") = author
+
+    WRITE !!,"Книгу успішно додано до бібліотеки!",!!
+
+    ; ---- Демонстрація кількох вбудованих функцій ----
+    ; 1) $DATA — перевіряє, чи існує запис
+    IF $DATA(^Books(date,id,genre,rating)) {
+        WRITE "1) $DATA: Запис існує!",!
+    } ELSE {
+        WRITE "1) $DATA: Запису не знайдено!",!
+    }
+
+    ; 2) $GET — безпечне читання вузла
+    WRITE "2) $GET: Автор книги = ", $GET(^Books(date,id,genre,rating,"Author"),"Невідомо"),!
+
+    ; 3) $ORDER — наступний ID після поточного у межах цієї дати
+    SET nextID = $ORDER(^Books(date,id))
+    WRITE "3) $ORDER: Наступний ID після ", id, " = ", $SELECT(nextID="":"(немає)", 1:nextID), !
+
+    ; 4) $QLENGTH — показує глибину вузла
+    SET node=$NA(^Books(date,id,genre,rating))
+    WRITE "4) $QLENGTH: Глибина вузла = ",$QLENGTH(node),!!
+
+    ; ---- Виведення всіх книг у бібліотеці ----
+    WRITE "=== Усі книги у бібліотеці ===",!
+    SET ref=$NA(^Books(""))
+    FOR  SET ref=$QUERY(@ref) QUIT:ref=""  DO
+    . IF $QSUBSCRIPT(ref,5)="Title" {
+    .     WRITE "Дата: ", $QSUBSCRIPT(ref,1)
+    .     WRITE " | ID: ", $QSUBSCRIPT(ref,2)
+    .     WRITE " | Жанр: ", $QSUBSCRIPT(ref,3)
+    .     WRITE " | Рейтинг: ", $QSUBSCRIPT(ref,4)
+    .     WRITE " | Назва: ", @ref
+    .     WRITE " | Автор: ", $GET(^Books($QSUBSCRIPT(ref,1),$QSUBSCRIPT(ref,2),$QSUBSCRIPT(ref,3),$QSUBSCRIPT(ref,4),"Author")),!
+    . }
+
+    WRITE !!,"Кінець списку.",!
+    QUIT
+
+CLEAR ; Очищення бібліотеки
+    KILL ^Books
+    WRITE "Бібліотеку очищено!",!
+    QUIT
