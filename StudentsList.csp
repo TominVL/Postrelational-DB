@@ -1,0 +1,98 @@
+<html>
+<head>
+    <title>Students</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f8;
+            margin: 20px;
+        }
+        h2 {
+            margin-bottom: 10px;
+        }
+        table {
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 0 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        th {
+            background: #f0f0f5;
+            text-align: left;
+        }
+        a.action {
+            margin-right: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #007bff;
+        }
+        a.action.edit {
+            background: #007bff;
+            color: white;
+        }
+        a.action.delete {
+            background: #fff;
+            color: #d9534f;
+            border-color: #d9534f;
+        }
+        a.create {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: #28a745;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Students</h2>
+
+<csp:sqlquery name="q">
+    SELECT ID, FullName, Email
+    FROM Online.Student
+</csp:sqlquery>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+
+    <csp:while condition="q.Next()">
+        <tr>
+            <td>#(q.Get("ID"))#</td>
+            <td>#(q.Get("FullName"))#</td>
+            <td>#(q.Get("Email"))#</td>
+            <td>
+
+<a class="action edit"
+   href="/csp/user/StudentForm.csp?ID=#(q.Get("ID"))#">Edit</a>
+
+
+<a class="action delete"
+   href="/csp/user/Online.StudentCSPService.cls?action=delete&ID=#(q.Get("ID"))#">
+   Delete
+</a>
+            </td>
+        </tr>
+    </csp:while>
+</table>
+
+<a class="create" href="/csp/user/StudentForm.csp">Create new student</a>
+
+</body>
+</html>
